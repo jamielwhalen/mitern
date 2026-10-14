@@ -29,6 +29,13 @@ export default function Home() {
             </Link>
 
             <Link
+                href="/login"
+                className="text-slate-600 hover:text-blue-800 font-medium transition"
+              >
+                Login
+            </Link>
+
+            <Link
               href="/about"
               className="text-slate-600 hover:text-blue-800 font-medium transition"
             >
