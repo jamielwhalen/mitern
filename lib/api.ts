@@ -1,6 +1,6 @@
 
 const API_URL =
-  process.env.PUBLIC_API_URL ??
+  process.env.NEXT_PUBLIC_API_URL ??
   "http://localhost:8080";
 
 export async function registerUser(email: string, password: string) {
@@ -46,7 +46,7 @@ export async function loginUser(
   password: string
 ) {
   const API_URL =
-    process.env.PUBLIC_API_URL ??
+    process.env.NEXT_PUBLIC_API_URL ??
     "http://localhost:8080";
 
   // Step 1: Get CSRF token
