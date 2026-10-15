@@ -4,6 +4,7 @@ const API_URL = "https://api.mitern.org";
   // "http://localhost:8080";
 
 export async function registerUser(email: string, password: string) {
+  console.log("in register user");
   // Obtain a CSRF token from Spring Boot.
   const csrfResponse = await fetch(
     `${API_URL}/api/csrf`,
@@ -16,6 +17,7 @@ export async function registerUser(email: string, password: string) {
 
   const csrf = await csrfResponse.json();
 
+  console.log("API_URL : ", API_URL);
   // Send registration request.
   const response = await fetch(
     `${API_URL}/api/users/register`,
