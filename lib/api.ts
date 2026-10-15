@@ -1,7 +1,7 @@
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ??
-  "http://localhost:8080";
+const API_URL = "https://api.mitern.org";
+  // process.env.NEXT_PUBLIC_API_URL ??
+  // "http://localhost:8080";
 
 export async function registerUser(email: string, password: string) {
   // Obtain a CSRF token from Spring Boot.
@@ -45,9 +45,9 @@ export async function loginUser(
   email: string,
   password: string
 ) {
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL ??
-    "http://localhost:8080";
+  const API_URL = "https://api.mitern.org";
+    // process.env.NEXT_PUBLIC_API_URL ??
+    // "http://localhost:8080";
 
   // Step 1: Get CSRF token
   const csrfResponse = await fetch(
