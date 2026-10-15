@@ -3,9 +3,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { registerUser } from "@/lib/api";
+import { registerUser, loginUser } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -13,6 +15,10 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  type AccountType = "STUDENT" | "BUSINESS";
+
+    const [accountType, setAccountType] =
+    useState<AccountType>("STUDENT");
 
   async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
@@ -34,12 +40,19 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const result = await registerUser(email, password);
+      const result = await registerUser(email, password, accountType);
 
-      setSuccess(true);
-      setMessage(
-        result.message || "Your account was created successfully!"
-      );
+        // Step 2: Automatically log in
+        await loginUser(email, password);
+
+        // Step 3: Navigate to the dashboard
+        setSuccess(true);
+        setMessage(
+            result.message || "Account created successfully!"
+        );
+
+        router.replace("/dashboard");
+        router.refresh();
 
       setEmail("");
       setPassword("");
@@ -141,6 +154,45 @@ export default function RegisterPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
+
+                {/* ACCOUNT TYPE */}
+                <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-3">
+                        I am registering as a
+                    </label>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        {(["STUDENT", "BUSINESS"] as const).map((type) => {
+                        const selected = accountType === type;
+
+                        return (
+                            <button
+                            key={type}
+                            type="button"
+                            onClick={() => setAccountType(type)}
+                            aria-pressed={selected}
+                            className={`rounded-xl border-2 px-4 py-4 text-center transition
+                                ${
+                                selected
+                                    ? "border-blue-600 bg-blue-50 text-blue-700"
+                                    : "border-slate-200 bg-white text-slate-600 hover:border-blue-300"
+                                }`}
+                            >
+                            <span className="block text-base font-semibold">
+                                {type === "STUDENT" ? "Student" : "Business"}
+                            </span>
+
+                            <span className="block mt-1 text-xs">
+                                {type === "STUDENT"
+                                ? "Find internships"
+                                : "Offer internships"}
+                            </span>
+                            </button>
+                        );
+                        })}
+                    </div>
+                </div>
+
 
               {/* EMAIL */}
               <div>
