@@ -85,6 +85,21 @@ export default function DashboardPage() {
     };
   }, [router]);
 
+  function getStatusColor(status: string): string {
+    switch (status) {
+        case "ACTIVE":
+            return "bg-green-100 text-green-700";
+        case "PENDING":
+            return "bg-orange-100 text-amber-700";
+        case "DRAFT":
+            return "bg-slate-100 text-slate-600";
+        case "CLOSED":
+            return "bg-red-100 text-red-700";
+        default:
+            return "bg-slate-100 text-slate-600";
+    }
+}
+
   async function handleLogout() {
     setLoggingOut(true);
     setError("");
@@ -302,9 +317,7 @@ export default function DashboardPage() {
                                 <td className="px-6 py-4">
                                 <span
                                     className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                                    job.status === "ACTIVE"
-                                        ? "bg-green-100 text-green-700"
-                                        : "bg-slate-100 text-slate-600"
+                                        getStatusColor(job.status)
                                     }`}
                                 >
                                     {job.status}
