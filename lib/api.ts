@@ -171,7 +171,35 @@ export async function logoutUser() {
 }
 
 export async function getMyJobs() {
+  const response = await fetch(`${API_URL}/api/jobs/myJobs`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to retrieve job listings.");
+  }
+
+  return response.json();
+}
+
+export async function getAllJobs() {
   const response = await fetch(`${API_URL}/api/jobs`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Unable to retrieve job listings.");
+  }
+
+  return response.json();
+}
+
+export async function getJobById(jobId: number) {
+  let url = `${API_URL}/api/jobs/${jobId}`;
+  console.log('url : ', url);
+  const response = await fetch(url, {
     method: "GET",
     credentials: "include",
   });

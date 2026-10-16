@@ -8,6 +8,7 @@ import {
   getCurrentUser,
   logoutUser,
   getMyJobs,
+  getAllJobs,
 } from "@/lib/api";
 
 type CurrentUser = {
@@ -17,6 +18,7 @@ type CurrentUser = {
 };
 
 type JobListing = {
+  createdBy: string;
   id: number;
   title: string;
   location: string;
@@ -38,6 +40,8 @@ export default function DashboardPage() {
   useEffect(() => {
     let active = true;
 
+    console.log("before load user");
+
     async function loadUser() {
       try {
         const currentUser = await getCurrentUser();
@@ -50,6 +54,9 @@ export default function DashboardPage() {
         }
 
         setUser(currentUser);
+        console.log(
+          "currentUser.roles" , currentUser.roles
+        )
 
         if (currentUser.roles.includes("ROLE_BUSINESS")) {
             setJobsLoading(true);
@@ -68,7 +75,24 @@ export default function DashboardPage() {
                 setJobsLoading(false);
                 }
             }
-        }
+        } else if (currentUser.roles.includes("ROLE_ADMIN")) {
+            setJobsLoading(true);
+
+            try {
+                const listings = await getAllJobs();
+                if (active) {
+                setJobs(listings);
+                }
+            } catch {
+                if (active) {
+                setJobsError("Unable to load job listings.");
+                }
+            } finally {
+                if (active) {
+                setJobsLoading(false);
+                }
+            }
+          }
       } catch {
         if (active) {
           setError("Unable to verify your session.");
@@ -78,6 +102,7 @@ export default function DashboardPage() {
       }
     }
 
+    console.log("what")
     loadUser();
 
     return () => {
@@ -221,7 +246,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Business Job Listings */}
-                {user.roles.includes("ROLE_BUSINESS") && (
+                {(user.roles.includes("ROLE_BUSINESS") || user.roles.includes("ROLE_ADMIN")) && (
                 <div className="mb-8 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
                     {/* Header */}
@@ -249,6 +274,10 @@ export default function DashboardPage() {
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 border-b border-slate-200">
                         <tr>
+                           { user.roles.includes("ROLE_ADMIN") &&
+                           <th className="px-6 py-4 text-xs font-semibold text-slate-600">
+                            Created By
+                            </th> } 
                             <th className="px-6 py-4 text-xs font-semibold text-slate-600">
                             Job Title
                             </th>
@@ -306,6 +335,11 @@ export default function DashboardPage() {
                                 key={job.id}
                                 className="hover:bg-slate-50 transition"
                             >
+                                { user.roles.includes("ROLE_ADMIN") &&
+                                  <td className="px-6 py-4 text-sm font-semibold text-slate-900">
+                                  {job.createdBy}
+                                  </td>
+                                } 
                                 <td className="px-6 py-4 text-sm font-semibold text-slate-900">
                                 {job.title}
                                 </td>
